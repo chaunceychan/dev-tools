@@ -1,0 +1,160 @@
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+jobs:
+  build-macos:
+    name: Build macOS (universal)
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.24.x"
+          cache: true
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install Wails CLI
+        run: go install github.com/wailsapp/wails/v2/cmd/wails@latest
+
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: npm ci
+
+      - name: Build frontend
+        working-directory: frontend
+        run: npm run build
+
+      - name: Build macOS universal binary
+        run: bash scripts/build-macos-universal.sh
+
+      - name: Package as zip
+        run: |
+          cd build/bin
+          zip -r "DevTools-macOS-${{ github.ref_name }}.zip" DevTools.app
+          mv "DevTools-macOS-${{ github.ref_name }}.zip" ../..
+
+      - name: Upload macOS artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: macos-app
+          path: "DevTools-macOS-${{ github.ref_name }}.zip"
+          if-no-files-found: error
+
+  build-windows:
+    name: Build Windows
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.24.x"
+          cache: true
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install Wails CLI
+        run: go install github.com/wailsapp/wails/v2/cmd/wails@latest
+
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: npm ci
+
+      - name: Build frontend
+        working-directory: frontend
+        run: npm run build
+
+      - name: Build Windows executable
+        run: wails build -webview2 embed -ldflags "-s -w -H windowsgui"
+
+      - name: Package as zip
+        shell: pwsh
+        run: |
+          $version = "${{ github.ref_name }}"
+          $pkg = "dist/dev-tools-portable"
+          New-Item -ItemType Directory -Force -Path "$pkg/data"
+          Copy-Item "build/bin/dev-tools.exe" "$pkg/"
+          @"
+          DevTools - 开发常用小工具集 $version
+
+          使用方法：
+          1. 解压此 zip 文件到任意目录
+          2. 双击 dev-tools.exe 运行
+          3. 数据文件保存在 exe 同目录下的 data/ 目录
+
+          包含工具：
+          - JSON 格式化（格式化/压缩/验证）
+          - Base64 编解码（文本/文件模式）
+          - 时间戳转换（双向转换+多时区）
+          - YAML 格式化（格式化/验证/转JSON）
+          - XML 格式化（格式化/压缩/验证）
+          - 随机字符串生成
+          - Cron 表达式解析
+          - URL 编解码（编码/解码/Query参数解析）
+          - Hash 摘要（MD5/SHA1/SHA256/SHA512）
+          - JWT 解析
+          - UUID 工具（生成/验证）
+          - 正则测试（匹配/替换）
+
+          注意：
+          - Windows 10/11 已自带 WebView2 runtime
+          - 如果系统缺少 WebView2，首次运行会自动引导安装
+          - 无需安装，无需注册表，解压即用
+          "@ | Out-File -FilePath "$pkg/README.txt" -Encoding UTF8
+          Compress-Archive -Path "$pkg/*" -DestinationPath "DevTools-Windows-$version.zip"
+          Move-Item "DevTools-Windows-$version.zip" "DevTools-Windows-${{ github.ref_name }}.zip"
+
+      - name: Upload Windows artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-exe
+          path: "DevTools-Windows-${{ github.ref_name }}.zip"
+          if-no-files-found: error
+
+  release:
+    name: Create Release
+    needs: [build-macos, build-windows]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download macOS artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: macos-app
+
+      - name: Download Windows artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: windows-exe
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: ${{ github.ref_name }}
+          draft: false
+          prerelease: false
+          files: |
+            DevTools-macOS-${{ github.ref_name }}.zip
+            DevTools-Windows-${{ github.ref_name }}.zip
+          generate_release_notes: true
