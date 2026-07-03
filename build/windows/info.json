@@ -1,0 +1,40 @@
+{
+  "FixedFileInfo": {
+    "FileVersion": {
+      "Major": 1,
+      "Minor": 0,
+      "Patch": 0,
+      "Build": 0
+    },
+    "ProductVersion": {
+      "Major": 1,
+      "Minor": 0,
+      "Patch": 0,
+      "Build": 0
+    },
+    "FileFlagsMask": "3f",
+    "FileFlags": "00",
+    "FileOS": "040004",
+    "FileType": "01",
+    "FileSubType": "00"
+  },
+  "StringFileInfo": {
+    "Comments": "开发常用小工具集桌面应用",
+    "CompanyName": "DevTools",
+    "FileDescription": "DevTools - 开发常用小工具集",
+    "FileVersion": "1.0.0",
+    "InternalName": "dev-tools",
+    "LegalCopyright": "Copyright 2025 DevTools Team",
+    "OriginalFilename": "dev-tools.exe",
+    "ProductName": "DevTools",
+    "ProductVersion": "1.0.0"
+  },
+  "VarFileInfo": {
+    "Translation": {
+      "LangID": "0400",
+      "CharsetID": "04b0"
+    }
+  },
+  "ManifestResourceID": "#1",
+  "DpiAwareness": "PerMonitorV2"
+}

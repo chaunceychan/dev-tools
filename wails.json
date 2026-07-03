@@ -1,0 +1,20 @@
+{
+  "$schema": "https://wails.io/schemas/config.v2.json",
+  "name": "DevTools",
+  "outputfilename": "dev-tools",
+  "frontend:install": "npm install",
+  "frontend:build": "npm run build",
+  "frontend:dev:watcher": "npm run dev",
+  "frontend:dev:serverUrl": "auto",
+  "author": {
+    "name": "Chauncey",
+    "email": ""
+  },
+  "info": {
+    "companyName": "Chauncey",
+    "productName": "DevTools - 开发常用小工具集",
+    "productVersion": "1.0.0",
+    "copyright": "Copyright 2026 Chauncey",
+    "comments": "开发常用小工具集桌面应用"
+  }
+}

@@ -1,0 +1,146 @@
+sequenceDiagram
+    participant User as 用户
+    participant Frontend as React 前端
+    participant WailsRT as Wails Runtime
+    participant App as Go App 结构体
+    participant GoPkg as Go pkg (工具包)
+
+    %% ========== 应用启动流程 ==========
+    rect rgb(230, 245, 255)
+        note over User, GoPkg: 应用启动（Wails v2 单进程）
+        User->>Frontend: 双击 dev-tools.exe 启动应用
+        Frontend->>WailsRT: main.go wails.Run() 启动
+        WailsRT->>App: App.startup(ctx) 保存 Wails 运行时上下文
+        App->>App: os.Executable() → 推导 {exe}/data/ 目录
+        App->>App: os.MkdirAll(dataDir) 创建数据目录
+        WailsRT->>Frontend: WebView2 加载 frontend 静态资源
+        Frontend->>Frontend: React 渲染 AppLayout + Sidebar
+        Frontend->>App: Sidebar 调用 GetToolList()
+        App-->>Frontend: 返回 []ToolMeta（7 个工具元信息）
+        Frontend->>User: 显示侧边栏工具列表 + 默认选中 JSON
+    end
+
+    %% ========== JSON 格式化操作流程 ==========
+    rect rgb(255, 245, 230)
+        note over User, GoPkg: JSON 格式化操作
+        User->>Frontend: 粘贴 JSON 文本到 InputArea
+        Frontend->>Frontend: toolStore.setInput(rawText)
+        User->>Frontend: 点击 [格式化] 按钮
+        Frontend->>Frontend: import { JsonFormat } from '../wailsjs/go/main/App'
+        Frontend->>WailsRT: JsonFormat(input, 2) → Promise
+        WailsRT->>App: App.JsonFormat(input, indent=2)
+        App->>GoPkg: jsonutil.Format(input, 2)
+        GoPkg-->>App: 返回格式化结果字符串 (result, nil)
+        App-->>WailsRT: (result, nil) → Wails 传回前端
+        WailsRT-->>Frontend: Promise resolve(result)
+        Frontend->>Frontend: toolStore.setOutput(result)
+        Frontend->>User: OutputArea 渲染格式化结果 + CopyButton
+    end
+
+    %% ========== JSON 验证失败流程 ==========
+    rect rgb(255, 230, 230)
+        note over User, GoPkg: JSON 验证失败
+        User->>Frontend: 点击 [验证] 按钮
+        Frontend->>WailsRT: JsonValidate(badJson) → Promise
+        WailsRT->>App: App.JsonValidate(badJson)
+        App->>GoPkg: jsonutil.Validate(badJson)
+        GoPkg-->>App: ("", error("Line 12: unexpected token '}'"))
+        App-->>WailsRT: ("", error) → Wails 传回前端
+        WailsRT-->>Frontend: Promise reject("Line 12: unexpected token '}'")
+        Frontend->>Frontend: toolStore.setError(errMsg)
+        Frontend->>User: ErrorDisplay 高亮显示错误行号 + 信息
+    end
+
+    %% ========== Base64 文件编码流程 ==========
+    rect rgb(230, 255, 230)
+        note over User, GoPkg: Base64 文件编码
+        User->>Frontend: 拖拽文件到 FileDropArea / 或使用 Dialog.OpenFile
+        Frontend->>Frontend: 获取文件路径 filePath
+        User->>Frontend: 点击 [编码] 按钮
+        Frontend->>WailsRT: Base64EncodeFile(filePath) → Promise
+        WailsRT->>App: App.Base64EncodeFile(filePath)
+        App->>GoPkg: base64util.EncodeFile(filePath)
+        GoPkg->>GoPkg: fileutil.CheckSize(filePath) → 10MB 上限检查
+        GoPkg->>GoPkg: os.ReadFile(filePath) → base64.Encode()
+        GoPkg-->>App: (base64Str, nil)
+        App-->>WailsRT: (base64Str, nil)
+        WailsRT-->>Frontend: Promise resolve(base64Str)
+        Frontend->>User: OutputArea 展示编码结果 + CopyButton
+    end
+
+    %% ========== 随机字符串生成流程（结构体参数） ==========
+    rect rgb(245, 255, 230)
+        note over User, GoPkg: 随机字符串生成
+        User->>Frontend: 配置参数 (length=16, charset, count=1)
+        Frontend->>Frontend: 构造 RandomParams 对象 {length:16, charsetFlags:{...}, count:1}
+        User->>Frontend: 点击 [生成] 按钮
+        Frontend->>WailsRT: RandomGenerate(params) → Promise
+        Note over WailsRT: Wails 自动将 JS RandomParams → Go RandomParams struct
+        WailsRT->>App: App.RandomGenerate(RandomParams{Length:16, CharsetFlags:..., Count:1})
+        App->>GoPkg: randomutil.Generate(16, charsetFlags, 1)
+        GoPkg-->>App: ([]string{"aB3x..."}, nil)
+        App-->>WailsRT: ([]string, nil) → Wails 自动转换为 JS string[]
+        WailsRT-->>Frontend: Promise resolve(["aB3x..."])
+        Frontend->>User: 渲染字符串列表 + 每条旁 CopyButton
+    end
+
+    %% ========== 时间戳转换流程 ==========
+    rect rgb(245, 230, 255)
+        note over User, GoPkg: 时间戳转日期 + 多时区
+        User->>Frontend: 输入时间戳 1700000000 + 选择单位（秒）
+        User->>Frontend: 点击 [转换] 按钮
+        Frontend->>WailsRT: TimestampToDate(1700000000, "s") → Promise
+        WailsRT->>App: App.TimestampToDate(1700000000, "s")
+        App->>GoPkg: timeutil.TimestampToDate(1700000000, "s")
+        GoPkg-->>App: ("2023-11-14 22:13:20 +08:00", nil)
+        App-->>WailsRT: (result, nil)
+        WailsRT-->>Frontend: Promise resolve(result)
+        Frontend->>WailsRT: MultiTimezone(1700000000, "s") → Promise
+        WailsRT->>App: App.MultiTimezone(1700000000, "s")
+        App->>GoPkg: timeutil.MultiTimezone(1700000000, "s")
+        GoPkg-->>App: ([]TimezoneResult{...}, nil)
+        App-->>WailsRT: ([]TimezoneResult, nil) → 自动转换为 JS 数组
+        WailsRT-->>Frontend: Promise resolve([{zone:"UTC", dateStr:"...", offset:"+00:00"}, ...])
+        Frontend->>User: OutputArea 展示转换结果 + 多时区对照表
+    end
+
+    %% ========== Cron 表达式解析流程 ==========
+    rect rgb(255, 255, 230)
+        note over User, GoPkg: Cron 解析
+        User->>Frontend: 输入 Cron 表达式 "0 */5 * * *"
+        User->>Frontend: 点击 [解析] 按钮
+        Frontend->>WailsRT: CronParse("0 */5 * * *") → Promise
+        WailsRT->>App: App.CronParse("0 */5 * * *")
+        App->>GoPkg: cronutil.Parse("0 */5 * * *")
+        GoPkg-->>App: (CronParseResult{Description:"每5小时执行一次", IsValid:true}, nil)
+        App-->>WailsRT: (CronParseResult, nil) → 自动转换为 JS object
+        WailsRT-->>Frontend: Promise resolve({description:"每5小时执行一次", isValid:true})
+        Frontend->>WailsRT: CronNextN("0 */5 * * *", 5) → Promise
+        WailsRT->>App: App.CronNextN("0 */5 * * *", 5)
+        App->>GoPkg: cronutil.NextN("0 */5 * * *", 5)
+        GoPkg-->>App: ([]string{"2023-11-15 00:00", "2023-11-15 05:00", ...}, nil)
+        App-->>WailsRT: ([]string, nil)
+        WailsRT-->>Frontend: Promise resolve(["2023-11-15 00:00", ...])
+        Frontend->>User: OutputArea 展示含义描述 + 下次5次执行时间列表
+    end
+
+    %% ========== 一键复制流程 ==========
+    rect rgb(230, 230, 255)
+        note over User, GoPkg: 一键复制到剪贴板
+        User->>Frontend: 点击 CopyButton
+        Frontend->>WailsRT: ClipboardWrite(resultText) → Promise
+        WailsRT->>App: App.ClipboardWrite(resultText)
+        App->>App: Wails runtime clipboard 写入
+        App-->>WailsRT: nil (成功)
+        WailsRT-->>Frontend: Promise resolve(undefined)
+        Frontend->>User: CopyButton 状态变为"已复制"（2秒后恢复）
+    end
+
+    %% ========== 应用关闭流程 ==========
+    rect rgb(220, 220, 220)
+        note over User, GoPkg: 应用关闭（Wails v2 单进程，无需 sidecar 关闭）
+        User->>Frontend: 关闭窗口
+        WailsRT->>App: App.shutdown() 清理回调
+        App->>App: 无 sidecar 进程需关闭，Go 进程随应用退出
+        WailsRT->>User: 应用进程终止
+    end

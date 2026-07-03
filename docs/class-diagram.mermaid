@@ -1,0 +1,355 @@
+classDiagram
+    direction TB
+
+    %% ===== Go 侧: Wails 绑定主结构体 =====
+    class App {
+        -context.Context ctx
+        +startup(ctx context.Context) void
+        +shutdown() void
+        +ClipboardWrite(text string) error
+        +GetDataDir() string
+        +GetToolList() []ToolMeta
+        +GetAppVersion() string
+        %% JSON 工具方法
+        +JsonFormat(input string, indent int) string, error
+        +JsonMinify(input string) string, error
+        +JsonValidate(input string) string, error
+        %% Base64 工具方法
+        +Base64EncodeText(input string) string, error
+        +Base64DecodeText(input string) string, error
+        +Base64EncodeFile(filePath string) string, error
+        +Base64DecodeFile(filePath string, outputPath string) string, error
+        %% 时间戳工具方法
+        +TimestampToDate(timestamp int64, unit string) string, error
+        +DateToTimestamp(dateStr string, timezone string) int64, error
+        +MultiTimezone(timestamp int64, unit string) []TimezoneResult, error
+        %% YAML 工具方法
+        +YamlFormat(input string, indent int) string, error
+        +YamlValidate(input string) string, error
+        +YamlToJSON(input string) string, error
+        %% XML 工具方法
+        +XmlFormat(input string, indent int) string, error
+        +XmlMinify(input string) string, error
+        +XmlValidate(input string) string, error
+        %% 随机字符串工具方法
+        +RandomGenerate(params RandomParams) []string, error
+        %% Cron 工具方法
+        +CronParse(expression string) CronParseResult, error
+        +CronValidate(expression string) string, error
+        +CronNextN(expression string, count int) []string, error
+    }
+
+    %% ===== Go 侧: 辅助结构体（参数/返回值，Wails 自动生成 TS 类型） =====
+    class RandomParams {
+        +int length
+        +map charsetFlags
+        +int count
+    }
+
+    class TimezoneResult {
+        +string zone
+        +string dateStr
+        +string offset
+    }
+
+    class CronParseResult {
+        +string description
+        +bool isValid
+    }
+
+    class ToolMeta {
+        +string id
+        +string name
+        +string icon
+        +string category
+        +ActionDef[] actions
+    }
+
+    class ActionDef {
+        +string action
+        +string label
+    }
+
+    App --> RandomParams : receives as param
+    App --> TimezoneResult : returns
+    App --> CronParseResult : returns
+    App --> ToolMeta : returns
+    ToolMeta --> ActionDef : contains
+
+    %% ===== Go 侧: pkg 工具包（纯函数） =====
+    class JsonUtil {
+        +Format(input string, indent int) string, error
+        +Minify(input string) string, error
+        +Validate(input string) string, error
+    }
+
+    class Base64Util {
+        +EncodeText(input string) string, error
+        +DecodeText(input string) string, error
+        +EncodeFile(filePath string) string, error
+        +DecodeFile(filePath string, outputPath string) string, error
+    }
+
+    class FileUtil {
+        +CheckSize(filePath string, limit int64) error
+        +ReadFile(filePath string) []byte, error
+        +WriteFile(filePath string, data []byte) error
+    }
+
+    class TimeUtil {
+        +TimestampToDate(ts int64, unit string) string, error
+        +DateToTimestamp(dateStr string, tz string) int64, error
+        +MultiTimezone(ts int64, unit string) []TimezoneResult, error
+    }
+
+    class YamlUtil {
+        +Format(input string, indent int) string, error
+        +Validate(input string) string, error
+        +ToJSON(input string) string, error
+    }
+
+    class XmlUtil {
+        +Format(input string, indent int) string, error
+        +Minify(input string) string, error
+        +Validate(input string) string, error
+    }
+
+    class RandomUtil {
+        +Generate(length int, charsetFlags map, count int) []string, error
+    }
+
+    class CronUtil {
+        +Parse(expression string) CronParseResult, error
+        +Validate(expression string) string, error
+        +NextN(expression string, count int) []string, error
+    }
+
+    App --> JsonUtil : JsonFormat→Format, JsonMinify→Minify, JsonValidate→Validate
+    App --> Base64Util : Base64EncodeText→EncodeText, Base64EncodeFile→EncodeFile
+    App --> FileUtil : 间接通过 Base64Util
+    App --> TimeUtil : TimestampToDate→TimestampToDate, MultiTimezone→MultiTimezone
+    App --> YamlUtil : YamlFormat→Format, YamlToJSON→ToJSON
+    App --> XmlUtil : XmlFormat→Format, XmlValidate→Validate
+    App --> RandomUtil : RandomGenerate→Generate
+    App --> CronUtil : CronParse→Parse, CronNextN→NextN
+
+    %% ===== Wails 自动生成层 =====
+    class WailsJSGoMainApp {
+        <<generated>>
+        +JsonFormat(input string, indent int) Promise~string~
+        +JsonMinify(input string) Promise~string~
+        +JsonValidate(input string) Promise~string~
+        +Base64EncodeText(input string) Promise~string~
+        +Base64DecodeText(input string) Promise~string~
+        +Base64EncodeFile(filePath string) Promise~string~
+        +Base64DecodeFile(filePath string, outputPath string) Promise~string~
+        +TimestampToDate(timestamp number, unit string) Promise~string~
+        +DateToTimestamp(dateStr string, timezone string) Promise~number~
+        +MultiTimezone(timestamp number, unit string) Promise~TimezoneResult[]~
+        +YamlFormat(input string, indent int) Promise~string~
+        +YamlValidate(input string) Promise~string~
+        +YamlToJSON(input string) Promise~string~
+        +XmlFormat(input string, indent int) Promise~string~
+        +XmlMinify(input string) Promise~string~
+        +XmlValidate(input string) Promise~string~
+        +RandomGenerate(params RandomParams) Promise~string[]~
+        +CronParse(expression string) Promise~CronParseResult~
+        +CronValidate(expression string) Promise~string~
+        +CronNextN(expression string, count int) Promise~string[]~
+        +ClipboardWrite(text string) Promise~void~
+        +GetDataDir() Promise~string~
+        +GetToolList() Promise~ToolMeta[]~
+        +GetAppVersion() Promise~string~
+    }
+
+    class WailsJSModels {
+        <<generated>>
+        +class RandomParams
+        +class TimezoneResult
+        +class CronParseResult
+        +class ToolMeta
+        +class ActionDef
+    }
+
+    WailsJSGoMainApp --> App : Wails runtime 绑定调用
+    WailsJSModels --> RandomParams : TS 类型定义映射
+
+    %% ===== 前端侧: Zustand Store =====
+    class ToolStore {
+        -ToolId currentTool
+        -string input
+        -string output
+        -string error
+        -bool loading
+        +setCurrentTool(ToolId) void
+        +setInput(string) void
+        +setOutput(string) void
+        +setError(string) void
+        +setLoading(bool) void
+        +clear() void
+    }
+
+    class HistoryStore {
+        -HistoryRecord[] records
+        +addRecord(HistoryRecord) void
+        +getRecords(ToolId) HistoryRecord[]
+        +clearRecords() void
+    }
+
+    class ThemeStore {
+        -string theme
+        +setTheme(string) void
+        +toggleTheme() void
+    }
+
+    %% ===== 前端侧: Hooks =====
+    class useGoMethod {
+        +call(args) Promise~T~
+        +loading bool
+    }
+
+    class useClipboard {
+        +copy(text) Promise~void~
+        +copied bool
+    }
+
+    useGoMethod --> ToolStore : updates loading/error/output
+    useGoMethod --> WailsJSGoMainApp : imports Go methods
+    useClipboard --> WailsJSGoMainApp : ClipboardWrite
+
+    %% ===== 前端侧: 组件 =====
+    class AppLayout {
+        -bool sidebarCollapsed
+        +render() JSX
+    }
+
+    class Sidebar {
+        -ToolId selectedTool
+        -bool collapsed
+        +onToolSelect(ToolId) void
+        +toggleCollapse() void
+        +render() JSX
+    }
+
+    class MainContent {
+        +render() JSX
+    }
+
+    class StatusBar {
+        +render() JSX
+    }
+
+    class InputArea {
+        -string value
+        +onChange(string) void
+        +render() JSX
+    }
+
+    class FileDropArea {
+        -string filePath
+        +onDrop(File) void
+        +onSelectFile() void
+        +render() JSX
+    }
+
+    class OutputArea {
+        -string result
+        -string error
+        +render() JSX
+    }
+
+    class ActionBar {
+        -ActionDef[] actions
+        +onActionClick(string) void
+        +render() JSX
+    }
+
+    class ErrorDisplay {
+        -string errorMessage
+        -int errorLine
+        +render() JSX
+    }
+
+    class CopyButton {
+        +onClick() void
+        +render() JSX
+    }
+
+    AppLayout --> Sidebar : contains
+    AppLayout --> MainContent : contains
+    AppLayout --> StatusBar : contains
+
+    %% ===== 工具页面组件 =====
+    class JsonTool {
+        +render() JSX
+    }
+    class Base64Tool {
+        -string mode
+        +render() JSX
+    }
+    class TimestampTool {
+        -string direction
+        -string unit
+        +render() JSX
+    }
+    class YamlTool {
+        +render() JSX
+    }
+    class XmlTool {
+        +render() JSX
+    }
+    class RandomTool {
+        -int length
+        -CharsetFlags charset
+        -int count
+        +render() JSX
+    }
+    class CronTool {
+        +render() JSX
+    }
+
+    JsonTool --> InputArea : uses
+    JsonTool --> ActionBar : uses
+    JsonTool --> OutputArea : uses
+    JsonTool --> ErrorDisplay : uses
+    JsonTool --> useGoMethod : uses (JsonFormat/Minify/Validate)
+
+    Base64Tool --> InputArea : uses (text mode)
+    Base64Tool --> FileDropArea : uses (file mode)
+    Base64Tool --> ActionBar : uses
+    Base64Tool --> OutputArea : uses
+    Base64Tool --> useGoMethod : uses (Base64EncodeText/EncodeFile)
+
+    TimestampTool --> InputArea : uses
+    TimestampTool --> ActionBar : uses
+    TimestampTool --> OutputArea : uses
+    TimestampTool --> useGoMethod : uses (TimestampToDate/DateToTimestamp/MultiTimezone)
+
+    YamlTool --> InputArea : uses
+    YamlTool --> ActionBar : uses
+    YamlTool --> OutputArea : uses
+    YamlTool --> useGoMethod : uses (YamlFormat/Validate/ToJSON)
+
+    XmlTool --> InputArea : uses
+    XmlTool --> ActionBar : uses
+    XmlTool --> OutputArea : uses
+    XmlTool --> useGoMethod : uses (XmlFormat/Minify/Validate)
+
+    RandomTool --> ActionBar : uses
+    RandomTool --> OutputArea : uses
+    RandomTool --> useGoMethod : uses (RandomGenerate)
+
+    CronTool --> InputArea : uses
+    CronTool --> ActionBar : uses
+    CronTool --> OutputArea : uses
+    CronTool --> useGoMethod : uses (CronParse/Validate/NextN)
+
+    MainContent --> JsonTool : renders
+    MainContent --> Base64Tool : renders
+    MainContent --> TimestampTool : renders
+    MainContent --> YamlTool : renders
+    MainContent --> XmlTool : renders
+    MainContent --> RandomTool : renders
+    MainContent --> CronTool : renders
+
+    Sidebar --> ToolStore : reads currentTool
