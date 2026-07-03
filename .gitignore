@@ -54,3 +54,4 @@ data/
 .codebase-memory/
 .workbuddy/
 .reasonix/
+reasonix.toml

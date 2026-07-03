@@ -35,6 +35,7 @@ jobs:
       - name: Generate Wails bindings
         run: |
           mkdir -p frontend/dist
+          touch frontend/dist/.gitkeep
           wails generate module
 
       - name: Run Go tests
