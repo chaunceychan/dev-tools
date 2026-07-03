@@ -31,14 +31,6 @@ jobs:
       - name: Install Wails CLI
         run: go install github.com/wailsapp/wails/v2/cmd/wails@latest
 
-      - name: Install frontend dependencies
-        working-directory: frontend
-        run: npm ci
-
-      - name: Build frontend
-        working-directory: frontend
-        run: npm run build
-
       - name: Build macOS universal binary
         run: bash scripts/build-macos-universal.sh
 
@@ -77,14 +69,6 @@ jobs:
 
       - name: Install Wails CLI
         run: go install github.com/wailsapp/wails/v2/cmd/wails@latest
-
-      - name: Install frontend dependencies
-        working-directory: frontend
-        run: npm ci
-
-      - name: Build frontend
-        working-directory: frontend
-        run: npm run build
 
       - name: Build Windows executable
         run: wails build -webview2 embed -ldflags "-s -w -H windowsgui"
@@ -133,9 +117,100 @@ jobs:
           path: "DevTools-Windows-${{ github.ref_name }}.zip"
           if-no-files-found: error
 
+  build-linux:
+    name: Build Linux (deb + rpm)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.24.x"
+          cache: true
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install Linux build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libgtk-3-dev libwebkit2gtk-4.0-dev
+
+      - name: Install Wails CLI
+        run: go install github.com/wailsapp/wails/v2/cmd/wails@latest
+
+      - name: Build Linux binary
+        run: wails build -ldflags "-s -w"
+
+      - name: Install nfpm
+        run: go install github.com/goreleaser/nfpm/v2/cmd/nfpm@latest
+
+      - name: Package .deb and .rpm
+        run: |
+          VERSION="${{ github.ref_name }}"
+          VERSION="${VERSION#v}"
+
+          mkdir -p dist/linux
+          cp build/bin/dev-tools dist/linux/
+
+          # Create .desktop entry
+          cat > dist/linux/dev-tools.desktop << 'DESKTOP'
+          [Desktop Entry]
+          Name=DevTools
+          Comment=开发常用小工具集
+          Exec=/usr/local/bin/dev-tools
+          Icon=dev-tools
+          Type=Application
+          Categories=Development;Utility;
+          DESKTOP
+
+          # Create nfpm config
+          cat > dist/nfpm.yaml << NFPM
+          name: dev-tools
+          arch: amd64
+          version: ${VERSION}
+          maintainer: Chauncey
+          description: DevTools - 开发常用小工具集（JSON/Base64/时间戳/YAML/XML/随机字符串/Cron/URL/Hash/JWT/UUID/正则）
+          homepage: https://github.com/chaunceychan/dev-tools
+          license: MIT
+          contents:
+            - src: dist/linux/dev-tools
+              dst: /usr/local/bin/dev-tools
+            - src: dist/linux/dev-tools.desktop
+              dst: /usr/share/applications/dev-tools.desktop
+            - src: dev_tool_logo_48x48.png
+              dst: /usr/share/icons/hicolor/48x48/apps/dev-tools.png
+          NFPM
+
+          nfpm package -p deb -f dist/nfpm.yaml -t dist/
+          nfpm package -p rpm -f dist/nfpm.yaml -t dist/
+
+          mv dist/dev-tools_${VERSION}_amd64.deb "DevTools-Linux-${{ github.ref_name }}.deb"
+          mv dist/dev-tools-${VERSION}-1.x86_64.rpm "DevTools-Linux-${{ github.ref_name }}.rpm"
+
+      - name: Upload .deb artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux-deb
+          path: "DevTools-Linux-${{ github.ref_name }}.deb"
+          if-no-files-found: error
+
+      - name: Upload .rpm artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux-rpm
+          path: "DevTools-Linux-${{ github.ref_name }}.rpm"
+          if-no-files-found: error
+
   release:
     name: Create Release
-    needs: [build-macos, build-windows]
+    needs: [build-macos, build-windows, build-linux]
     runs-on: ubuntu-latest
     steps:
       - name: Download macOS artifact
@@ -148,6 +223,16 @@ jobs:
         with:
           name: windows-exe
 
+      - name: Download Linux .deb artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: linux-deb
+
+      - name: Download Linux .rpm artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: linux-rpm
+
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
@@ -157,4 +242,6 @@ jobs:
           files: |
             DevTools-macOS-${{ github.ref_name }}.zip
             DevTools-Windows-${{ github.ref_name }}.zip
+            DevTools-Linux-${{ github.ref_name }}.deb
+            DevTools-Linux-${{ github.ref_name }}.rpm
           generate_release_notes: true
