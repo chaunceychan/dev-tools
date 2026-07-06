@@ -193,4 +193,13 @@ var ToolList = []ToolMeta{
 			{Action: "replace", Label: "替换"},
 		},
 	},
+	{
+		ID:       "regex-validator",
+		Name:     "常用校验",
+		Icon:     "✓",
+		Category: "extended",
+		Actions: []ActionDef{
+			{Action: "validatePattern", Label: "验证"},
+		},
+	},
 }

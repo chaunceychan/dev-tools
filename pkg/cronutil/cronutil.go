@@ -154,3 +154,65 @@ func describeField(field string, name string) string {
 		return fmt.Sprintf("%s %s", name, field)
 	}
 }
+
+// GenerateInterval generates a cron expression for a fixed interval.
+// unit must be one of: "second", "minute", "hour", "day", "week", "month".
+// Returns a 6-field expression for seconds, 5-field otherwise.
+func GenerateInterval(interval int, unit string) (string, error) {
+	if interval < 1 || interval > 365 {
+		return "", fmt.Errorf("interval must be between 1 and 365, got %d", interval)
+	}
+
+	switch unit {
+	case "second":
+		return fmt.Sprintf("*/%d * * * * *", interval), nil
+	case "minute":
+		return fmt.Sprintf("*/%d * * * *", interval), nil
+	case "hour":
+		return fmt.Sprintf("0 */%d * * *", interval), nil
+	case "day":
+		return fmt.Sprintf("0 0 */%d * *", interval), nil
+	case "week":
+		return fmt.Sprintf("0 0 * * */%d", interval), nil
+	case "month":
+		return fmt.Sprintf("0 0 1 */%d *", interval), nil
+	default:
+		return "", fmt.Errorf("unknown unit: %s (must be second/minute/hour/day/week/month)", unit)
+	}
+}
+
+// GenerateFixedTime generates a cron expression for a specific time scenario.
+// scenario must be: "daily", "weekday", "weekly", "monthly".
+// hour: 0-23, min: 0-59, dayOrDow: for weekly=dayOfWeek(1=Mon..7=Sun), for monthly=dayOfMonth(1-31).
+func GenerateFixedTime(scenario string, hour, min, dayOrDow int) (string, error) {
+	if hour < 0 || hour > 23 {
+		return "", fmt.Errorf("hour must be 0-23, got %d", hour)
+	}
+	if min < 0 || min > 59 {
+		return "", fmt.Errorf("minute must be 0-59, got %d", min)
+	}
+
+	switch scenario {
+	case "daily":
+		return fmt.Sprintf("%d %d * * *", min, hour), nil
+	case "weekday":
+		return fmt.Sprintf("%d %d * * 1-5", min, hour), nil
+	case "weekly":
+		if dayOrDow < 1 || dayOrDow > 7 {
+			return "", fmt.Errorf("dayOfWeek must be 1-7, got %d", dayOrDow)
+		}
+		// cron uses 0=Sunday or 7=Sunday. We use 1=Monday mapping.
+		cronDow := dayOrDow
+		if dayOrDow == 7 {
+			cronDow = 0
+		}
+		return fmt.Sprintf("%d %d * * %d", min, hour, cronDow), nil
+	case "monthly":
+		if dayOrDow < 1 || dayOrDow > 31 {
+			return "", fmt.Errorf("dayOfMonth must be 1-31, got %d", dayOrDow)
+		}
+		return fmt.Sprintf("%d %d %d * *", min, hour, dayOrDow), nil
+	default:
+		return "", fmt.Errorf("unknown scenario: %s (must be daily/weekday/weekly/monthly)", scenario)
+	}
+}
