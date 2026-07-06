@@ -21,9 +21,7 @@ const OutputArea: React.FC<OutputAreaProps> = ({
         <label className="block text-sm font-medium text-text">{label}</label>
         {output && <CopyButton text={output} />}
       </div>
-      <div
-        className="w-full rounded-lg border border-border bg-surface text-text p-3 code-text overflow-y-auto min-h-[120px] max-h-[300px]"
-      >
+      <div className="w-full rounded-lg border border-border bg-code-bg text-code-text p-3 code-text overflow-y-auto min-h-[120px] max-h-[300px]">
         {output || <span className="text-muted">等待操作结果...</span>}
       </div>
     </div>

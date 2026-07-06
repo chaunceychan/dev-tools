@@ -1,6 +1,7 @@
 import React from 'react';
 import { useToolStore } from '@/store/toolStore';
 import { TOOL_LIST, TOOL_CATEGORIES } from '@/utils/constants';
+import ThemeToggle from '@/components/common/ThemeToggle';
 import type { ToolId } from '@/types/tool';
 import '@/styles/sidebar.css';
 
@@ -27,7 +28,7 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, onToggleCollapse }) => {
     >
       {/* Header */}
       <div
-        className={`flex items-center border-b border-gray-700 ${
+        className={`flex items-center border-b border-border ${
           collapsed ? 'px-1 py-3 gap-1' : 'px-4 py-3 justify-between'
         }`}
       >
@@ -45,7 +46,7 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, onToggleCollapse }) => {
         </div>
         <button
           onClick={onToggleCollapse}
-          className={`text-sidebar-text hover:text-white transition-colors rounded ${
+          className={`text-sidebar-text hover:text-primary transition-colors rounded cursor-pointer ${
             collapsed ? 'p-0.5 text-xs' : 'p-1'
           }`}
           title={collapsed ? '展开侧边栏' : '折叠侧边栏'}
@@ -61,7 +62,7 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, onToggleCollapse }) => {
             type="text"
             placeholder="搜索工具..."
             disabled
-            className="w-full px-3 py-1.5 rounded bg-gray-700 text-gray-400 text-sm border border-gray-600 placeholder-gray-500 cursor-not-allowed"
+            className="w-full px-3 py-1.5 rounded-lg bg-surface-elevated text-sidebar-text text-sm border border-border placeholder:text-sidebar-muted cursor-not-allowed opacity-60"
           />
         </div>
       )}
@@ -89,10 +90,11 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, onToggleCollapse }) => {
         })}
       </div>
 
-      {/* Footer: version info */}
+      {/* Footer: theme toggle + version info */}
       {!collapsed && (
-        <div className="px-4 py-2 text-xs text-gray-500 border-t border-gray-700">
-          v1.0.0
+        <div className="border-t border-border px-2 py-2">
+          <ThemeToggle />
+          <div className="px-3 py-1 text-xs text-sidebar-muted">v1.0.0</div>
         </div>
       )}
     </div>
