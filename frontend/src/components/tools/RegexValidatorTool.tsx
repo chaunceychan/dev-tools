@@ -29,10 +29,11 @@ const RegexValidatorTool: React.FC = () => {
     useToolStore.setState({ output: '', error: '' });
     try {
       const result = await testCall(currentPreset.pattern, text.trim());
-      const hasMatch = result && !result.startsWith('No matches');
+      const resultStr = String(result ?? '');
+      const hasMatch = resultStr.length > 0 && !resultStr.startsWith('No matches');
       setValidateResult({
         valid: hasMatch,
-        detail: result || '',
+        detail: resultStr,
       });
     } catch {
       // error handled by useGoMethod

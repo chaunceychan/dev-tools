@@ -29,7 +29,7 @@ export { XmlFormat, XmlMinify, XmlValidate } from '../../wailsjs/go/main/App';
 export { RandomGenerate } from '../../wailsjs/go/main/App';
 
 // Cron methods
-export { CronParse, CronValidate, CronNextN, CronGenerateInterval, CronGenerateFixedTime } from '../../wailsjs/go/main/App';
+export { CronParse, CronValidate, CronNextN } from '../../wailsjs/go/main/App';
 
 // URL methods
 export { UrlEncode, UrlDecode, UrlParseQuery } from '../../wailsjs/go/main/App';
