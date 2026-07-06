@@ -31,3 +31,16 @@ func (a *App) CronNextN(expression string, count int) ([]string, error) {
 	}
 	return cronutil.NextN(expression, count)
 }
+
+// CronGenerateInterval generates a cron expression for a fixed interval.
+// unit: "second", "minute", "hour", "day", "week", "month"
+func (a *App) CronGenerateInterval(interval int, unit string) (string, error) {
+	return cronutil.GenerateInterval(interval, unit)
+}
+
+// CronGenerateFixedTime generates a cron expression for a specific time scenario.
+// scenario: "daily", "weekday", "weekly", "monthly"
+// hour: 0-23, min: 0-59, dayOrDow: context-dependent
+func (a *App) CronGenerateFixedTime(scenario string, hour int, min int, dayOrDow int) (string, error) {
+	return cronutil.GenerateFixedTime(scenario, hour, min, dayOrDow)
+}
