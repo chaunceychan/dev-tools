@@ -166,6 +166,15 @@ export const TOOL_LIST: ToolMeta[] = [
       { action: 'replace', label: '替换' },
     ],
   },
+  {
+    id: 'regex-validator',
+    name: '常用校验',
+    icon: '✓',
+    category: 'extended',
+    actions: [
+      { action: 'validatePattern', label: '验证' },
+    ],
+  },
 ];
 
 /** Get tool metadata by ID */
@@ -216,4 +225,17 @@ export const HASH_ALGORITHM_OPTIONS = [
   { value: 'sha1', label: 'SHA1' },
   { value: 'sha256', label: 'SHA256' },
   { value: 'sha512', label: 'SHA512' },
+];
+
+/** Regex validator preset patterns */
+export const REGEX_VALIDATOR_PRESETS: { name: string; pattern: string; label: string }[] = [
+  { name: 'email', pattern: '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$', label: '邮箱校验' },
+  { name: 'phone', pattern: '^1[3-9]\\d{9}$', label: '中国手机号' },
+  { name: 'number', pattern: '^\\d+$', label: '纯数字' },
+  { name: 'letter', pattern: '^[a-zA-Z]+$', label: '纯字母' },
+  { name: 'alphanum', pattern: '^[a-zA-Z0-9]+$', label: '字母+数字' },
+  { name: 'url', pattern: '^https?://[^\\s/$.?#].[^\\s]*$', label: 'URL 校验' },
+  { name: 'ipv4', pattern: '^(\\d{1,3}\\.){3}\\d{1,3}$', label: 'IPv4 地址' },
+  { name: 'date', pattern: '^\\d{4}-\\d{2}-\\d{2}$', label: '日期格式' },
+  { name: 'idcard', pattern: '^\\d{17}[\\dXx]$', label: '身份证号' },
 ];

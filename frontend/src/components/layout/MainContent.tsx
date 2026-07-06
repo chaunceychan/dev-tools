@@ -12,6 +12,7 @@ import HashTool from '@/components/tools/HashTool';
 import JwtTool from '@/components/tools/JwtTool';
 import UuidTool from '@/components/tools/UuidTool';
 import RegexTool from '@/components/tools/RegexTool';
+import RegexValidatorTool from '@/components/tools/RegexValidatorTool';
 import type { ToolId } from '@/types/tool';
 
 /** Tool component mapping — each ToolId maps to its React component */
@@ -28,6 +29,7 @@ const TOOL_COMPONENTS: Record<ToolId, React.FC> = {
   jwt: JwtTool,
   uuid: UuidTool,
   regex: RegexTool,
+  'regex-validator': RegexValidatorTool,
 };
 
 /**

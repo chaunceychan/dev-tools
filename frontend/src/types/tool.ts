@@ -1,12 +1,12 @@
 /** Tool identifier type — matches Go ToolMeta.ID values */
 export type ToolId = 'json' | 'base64' | 'timestamp' | 'yaml' | 'xml' | 'random' | 'cron' |
-  'url' | 'hash' | 'jwt' | 'uuid' | 'regex';
+  'url' | 'hash' | 'jwt' | 'uuid' | 'regex' | 'regex-validator';
 
 /** Tool action identifier */
 export type ToolAction = 'format' | 'minify' | 'validate' | 'encodeText' | 'decodeText' |
   'encodeFile' | 'decodeFile' | 'toDate' | 'toTimestamp' | 'timezone' |
   'toJSON' | 'generate' | 'parse' | 'nextN' | 'encode' | 'decode' |
-  'parseQuery' | 'generateAll' | 'test' | 'replace';
+  'parseQuery' | 'generateAll' | 'test' | 'replace' | 'validatePattern';
 
 /** Action definition within a tool */
 export interface ActionDef {
