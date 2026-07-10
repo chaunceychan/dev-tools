@@ -7,6 +7,8 @@ import ErrorDisplay from '@/components/common/ErrorDisplay';
 import useGoMethod from '@/hooks/useGoMethod';
 import { XmlFormat, XmlMinify, XmlValidate } from '@/utils/wailsApi';
 
+type XmlAction = 'format' | 'minify' | 'validate';
+
 /**
  * XmlTool — XML formatting tool with 3 actions:
  * - 格式化 (Format): beautify with indentation
@@ -15,28 +17,42 @@ import { XmlFormat, XmlMinify, XmlValidate } from '@/utils/wailsApi';
  */
 const XmlTool: React.FC = () => {
   const input = useToolStore((state) => state.input);
+  const output = useToolStore((state) => state.output);
   const loading = useToolStore((state) => state.loading);
   const error = useToolStore((state) => state.error);
+  const setInput = useToolStore((state) => state.setInput);
   const [indent, setIndent] = useState(2);
+  const [lastAction, setLastAction] = useState<XmlAction | null>(null);
 
-  const { call: formatCall } = useGoMethod('XmlFormat', XmlFormat);
-  const { call: minifyCall } = useGoMethod('XmlMinify', XmlMinify);
-  const { call: validateCall } = useGoMethod('XmlValidate', XmlValidate);
+  const { call: formatCall } = useGoMethod({ methodName: 'XmlFormat', toolId: 'xml', action: 'format' }, XmlFormat);
+  const { call: minifyCall } = useGoMethod({ methodName: 'XmlMinify', toolId: 'xml', action: 'minify' }, XmlMinify);
+  const { call: validateCall } = useGoMethod({ methodName: 'XmlValidate', toolId: 'xml', action: 'validate' }, XmlValidate);
 
   const handleFormat = async () => {
     if (!input.trim()) return;
     await formatCall(input, indent);
+    setLastAction('format');
   };
 
   const handleMinify = async () => {
     if (!input.trim()) return;
     await minifyCall(input);
+    setLastAction('minify');
   };
 
   const handleValidate = async () => {
     if (!input.trim()) return;
     await validateCall(input);
+    setLastAction('validate');
   };
+
+  const handleUseOutputAsInput = () => {
+    if (!output.trim()) return;
+    setInput(output);
+  };
+
+  const canReuseOutput = Boolean(output.trim()) && lastAction !== 'validate' && output !== input;
+  const outputLabel = lastAction === 'validate' ? '验证结果' : '输出';
 
   return (
     <div className="space-y-3">
@@ -51,6 +67,7 @@ const XmlTool: React.FC = () => {
           >
             <option value={2}>2 空格</option>
             <option value={4}>4 空格</option>
+            <option value={8}>8 空格</option>
           </select>
         </div>
       </div>
@@ -66,7 +83,21 @@ const XmlTool: React.FC = () => {
       />
 
       {error && <ErrorDisplay />}
-      <OutputArea />
+      <div className="space-y-2">
+        <OutputArea label={outputLabel} />
+        {lastAction !== 'validate' && (
+          <div className="flex justify-end">
+            <button
+              type="button"
+              onClick={handleUseOutputAsInput}
+              disabled={!canReuseOutput || loading}
+              className="px-3 py-1.5 rounded-lg border border-border bg-surface text-sm text-text transition-colors hover:bg-bg focus:outline-none focus:ring-2 focus:ring-primary/50 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              将结果用作输入
+            </button>
+          </div>
+        )}
+      </div>
     </div>
   );
 };

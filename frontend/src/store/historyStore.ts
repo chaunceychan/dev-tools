@@ -1,19 +1,26 @@
 import { create } from 'zustand';
-import type { ToolId, ToolAction } from '@/types/tool';
+import type { ToolId, ToolAction, ToolExecutionStatus } from '@/types/tool';
 
 /** History record for a tool operation */
-interface HistoryRecord {
+export interface HistoryRecord {
   toolId: ToolId;
   action: ToolAction;
+  methodName?: string;
   input: string;
   output: string;
+  error?: string;
+  status: ToolExecutionStatus;
   timestamp: number;
 }
 
-/** History state managed by Zustand (P2 placeholder — in-memory only) */
+export interface HistoryRecordInput extends Omit<HistoryRecord, 'timestamp'> {
+  timestamp?: number;
+}
+
+/** History state managed by Zustand (in-memory, capped to the latest 50 records) */
 interface HistoryState {
   records: HistoryRecord[];
-  addRecord: (record: HistoryRecord) => void;
+  addRecord: (record: HistoryRecordInput) => void;
   clearRecords: () => void;
 }
 
@@ -22,7 +29,7 @@ export const useHistoryStore = create<HistoryState>((set) => ({
 
   addRecord: (record) =>
     set((state) => {
-      const records = [record, ...state.records].slice(0, 50);
+      const records = [{ ...record, timestamp: record.timestamp ?? Date.now() }, ...state.records].slice(0, 50);
       return { records };
     }),
 

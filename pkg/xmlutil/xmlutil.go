@@ -3,6 +3,7 @@ package xmlutil
 import (
 	"bytes"
 	"encoding/xml"
+	"errors"
 	"fmt"
 	"io"
 	"strings"
@@ -17,7 +18,7 @@ func Format(input string, indent int) (string, error) {
 
 	result, err := encodeXML(input, indent, false)
 	if err != nil {
-		return "", fmt.Errorf("XML parse error: %v", err)
+		return "", fmt.Errorf("XML parse error: %w", err)
 	}
 
 	return strings.TrimSpace(result), nil
@@ -32,7 +33,7 @@ func Minify(input string) (string, error) {
 
 	result, err := encodeXML(input, 0, true)
 	if err != nil {
-		return "", fmt.Errorf("XML parse error: %v", err)
+		return "", fmt.Errorf("XML parse error: %w", err)
 	}
 
 	return result, nil
@@ -53,19 +54,7 @@ func Validate(input string) (string, error) {
 			break
 		}
 		if err != nil {
-			line := decoder.InputOffset()
-			// Approximate line number from offset
-			lines := strings.Split(input, "\n")
-			lineNum := 1
-			pos := 0
-			for pos < int(line) && lineNum < len(lines)+1 {
-				lineLen := len(lines[lineNum-1]) + 1
-				pos += lineLen
-				if pos <= int(line) {
-					lineNum++
-				}
-			}
-			return fmt.Sprintf("Invalid XML: Line %d: %v", lineNum, err), nil
+			return fmt.Sprintf("Invalid XML: %s", describeParseError(decoder, err)), nil
 		}
 	}
 
@@ -92,7 +81,7 @@ func encodeXML(input string, indent int, minify bool) (string, error) {
 			break
 		}
 		if err != nil {
-			return "", err
+			return "", fmt.Errorf("%s", describeParseError(decoder, err))
 		}
 		if minify {
 			if charData, ok := token.(xml.CharData); ok && strings.TrimSpace(string(charData)) == "" {
@@ -108,6 +97,33 @@ func encodeXML(input string, indent int, minify bool) (string, error) {
 	}
 
 	return buf.String(), nil
+}
+
+func describeParseError(decoder *xml.Decoder, err error) string {
+	message := err.Error()
+
+	var syntaxErr *xml.SyntaxError
+	if errors.As(err, &syntaxErr) {
+		prefix := fmt.Sprintf("XML syntax error on line %d: ", syntaxErr.Line)
+		message = strings.TrimPrefix(message, prefix)
+	}
+
+	line, column := 0, 0
+	if decoder != nil {
+		line, column = decoder.InputPos()
+	}
+	if line == 0 && errors.As(err, &syntaxErr) {
+		line = syntaxErr.Line
+	}
+
+	switch {
+	case line > 0 && column > 0:
+		return fmt.Sprintf("Line %d, Column %d: %s", line, column, message)
+	case line > 0:
+		return fmt.Sprintf("Line %d: %s", line, message)
+	default:
+		return message
+	}
 }
 
 // parseXMLNode recursively parses XML tokens into a node tree.

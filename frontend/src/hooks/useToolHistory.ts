@@ -1,26 +1,24 @@
-import { useHistoryStore } from '@/store/historyStore';
-import type { ToolId, ToolAction } from '@/types/tool';
+import { useCallback } from 'react';
+import { useHistoryStore, type HistoryRecord, type HistoryRecordInput } from '@/store/historyStore';
+
+const EMPTY_HISTORY: HistoryRecord[] = [];
+
+interface UseToolHistoryOptions {
+  subscribe?: boolean;
+}
 
 /**
- * useToolHistory — hook for recording tool operations in the history store (P2 placeholder).
- * Currently only adds records to the in-memory store.
+ * useToolHistory — hook for subscribing to and recording tool execution history.
  */
-function useToolHistory() {
-  const addRecord = (toolId: ToolId, action: ToolAction, input: string, output: string) => {
-    useHistoryStore.getState().addRecord({
-      toolId,
-      action,
-      input,
-      output,
-      timestamp: Date.now(),
-    });
-  };
+function useToolHistory(options: UseToolHistoryOptions = {}) {
+  const { subscribe = true } = options;
+  const records = useHistoryStore((state) => (subscribe ? state.records : EMPTY_HISTORY));
+  const storeAddRecord = useHistoryStore((state) => state.addRecord);
+  const clearHistory = useHistoryStore((state) => state.clearRecords);
 
-  const clearHistory = () => {
-    useHistoryStore.getState().clearRecords();
-  };
-
-  const records = useHistoryStore.getState().records;
+  const addRecord = useCallback((record: HistoryRecordInput) => {
+    storeAddRecord(record);
+  }, [storeAddRecord]);
 
   return { addRecord, clearHistory, records };
 }

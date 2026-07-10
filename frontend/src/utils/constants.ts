@@ -24,7 +24,7 @@ export const DEFAULT_RANDOM_LENGTH = 16;
 export const DEFAULT_RANDOM_COUNT = 1;
 
 /** Application version */
-export const APP_VERSION = '1.0.0';
+export const APP_VERSION = '1.1.0';
 
 /** Sidebar width in pixels */
 export const SIDEBAR_WIDTH = 200;
@@ -49,6 +49,7 @@ export const TOOL_LIST: ToolMeta[] = [
       { action: 'format', label: '格式化' },
       { action: 'minify', label: '压缩' },
       { action: 'validate', label: '验证' },
+      { action: 'toYAML', label: '转YAML' },
     ],
   },
   {
@@ -173,6 +174,16 @@ export const TOOL_LIST: ToolMeta[] = [
     category: 'extended',
     actions: [
       { action: 'validatePattern', label: '验证' },
+    ],
+  },
+  {
+    id: 'text-diff',
+    name: '文本 Diff',
+    icon: 'DIFF',
+    category: 'extended',
+    actions: [
+      { action: 'compareText', label: '文本比较' },
+      { action: 'compareFiles', label: '文件比较' },
     ],
   },
 ];

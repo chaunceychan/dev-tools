@@ -17,6 +17,14 @@ func (a *App) JsonMinify(input string) (string, error) {
 	return jsonutil.Minify(input)
 }
 
+// JsonToYAML converts JSON input to YAML format.
+func (a *App) JsonToYAML(input string, indent int) (string, error) {
+	if indent <= 0 {
+		indent = 2
+	}
+	return jsonutil.ToYAML(input, indent)
+}
+
 // JsonValidate checks if the input is valid JSON.
 func (a *App) JsonValidate(input string) (string, error) {
 	return jsonutil.Validate(input)

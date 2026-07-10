@@ -15,28 +15,62 @@ import { YamlFormat, YamlValidate, YamlToJSON } from '@/utils/wailsApi';
  */
 const YamlTool: React.FC = () => {
   const input = useToolStore((state) => state.input);
+  const output = useToolStore((state) => state.output);
   const loading = useToolStore((state) => state.loading);
   const error = useToolStore((state) => state.error);
+  const setInput = useToolStore((state) => state.setInput);
+  const setCurrentTool = useToolStore((state) => state.setCurrentTool);
   const [indent, setIndent] = useState(2);
+  const [lastAction, setLastAction] = useState<'format' | 'validate' | 'toJSON' | null>(null);
 
-  const { call: formatCall } = useGoMethod('YamlFormat', YamlFormat);
-  const { call: validateCall } = useGoMethod('YamlValidate', YamlValidate);
-  const { call: toJSONCall } = useGoMethod('YamlToJSON', YamlToJSON);
+  const { call: formatCall } = useGoMethod({ methodName: 'YamlFormat', toolId: 'yaml', action: 'format' }, YamlFormat);
+  const { call: validateCall } = useGoMethod({ methodName: 'YamlValidate', toolId: 'yaml', action: 'validate' }, YamlValidate);
+  const { call: toJSONCall } = useGoMethod({ methodName: 'YamlToJSON', toolId: 'yaml', action: 'toJSON' }, YamlToJSON);
 
   const handleFormat = async () => {
     if (!input.trim()) return;
     await formatCall(input, indent);
+    setLastAction('format');
   };
 
   const handleValidate = async () => {
     if (!input.trim()) return;
     await validateCall(input);
+    setLastAction('validate');
   };
 
   const handleToJSON = async () => {
     if (!input.trim()) return;
     await toJSONCall(input);
+    setLastAction('toJSON');
   };
+
+  const handleUseOutput = () => {
+    if (!output) return;
+    setInput(output);
+  };
+
+  const handleContinueInJson = () => {
+    if (!output) return;
+    setCurrentTool('json');
+    setInput(output);
+  };
+
+  const followUpActions = [];
+  if (output && lastAction === 'format') {
+    followUpActions.push({
+      label: '使用当前输出',
+      onClick: handleUseOutput,
+      variant: 'secondary' as const,
+    });
+  }
+  if (output && lastAction === 'toJSON') {
+    followUpActions.push({
+      label: '在 JSON 工具继续',
+      onClick: handleContinueInJson,
+      variant: 'secondary' as const,
+    });
+  }
 
   return (
     <div className="space-y-3">
@@ -67,6 +101,7 @@ const YamlTool: React.FC = () => {
 
       {error && <ErrorDisplay />}
       <OutputArea />
+      {followUpActions.length > 0 && <ActionBar actions={followUpActions} />}
     </div>
   );
 };

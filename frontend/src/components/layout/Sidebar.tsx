@@ -1,6 +1,6 @@
 import React from 'react';
 import { useToolStore } from '@/store/toolStore';
-import { TOOL_LIST, TOOL_CATEGORIES } from '@/utils/constants';
+import { TOOL_LIST, TOOL_CATEGORIES, APP_VERSION } from '@/utils/constants';
 import ThemeToggle from '@/components/common/ThemeToggle';
 import type { ToolId } from '@/types/tool';
 import '@/styles/sidebar.css';
@@ -94,7 +94,7 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, onToggleCollapse }) => {
       {!collapsed && (
         <div className="border-t border-border px-2 py-2">
           <ThemeToggle />
-          <div className="px-3 py-1 text-xs text-sidebar-muted">v1.0.0</div>
+          <div className="px-3 py-1 text-xs text-sidebar-muted">v{APP_VERSION}</div>
         </div>
       )}
     </div>

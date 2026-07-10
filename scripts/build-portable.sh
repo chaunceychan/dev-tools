@@ -49,7 +49,7 @@ mkdir -p "$DIST_DIR/data"
 
 # Create a simple README for the portable package
 cat > "$DIST_DIR/README.txt" << 'EOF'
-DevTools - 开发常用小工具集 v1.0.0
+DevTools - 开发常用小工具集 v1.1.0
 
 使用方法：
 1. 解压此 zip 文件到任意目录
@@ -78,11 +78,11 @@ EOF
 
 # Package as zip
 echo "=== Creating portable zip package ==="
-rm -f dist/dev-tools-portable-v1.0.0.zip
+rm -f dist/dev-tools-portable-v1.1.0.zip
 cd dist
-zip -r dev-tools-portable-v1.0.0.zip dev-tools-portable/
+zip -r dev-tools-portable-v1.1.0.zip dev-tools-portable/
 cd ..
 
 echo ""
 echo "=== All done! ==="
-echo "Portable package: dist/dev-tools-portable-v1.0.0.zip"
+echo "Portable package: dist/dev-tools-portable-v1.1.0.zip"

@@ -57,6 +57,14 @@ export {
   GetAppVersion,
 } from '../../wailsjs/go/main/App';
 
+const getAppBinding = () => (window as any).go.main.App;
+export const JsonToYAML: GoMethodFn<string> = (input: string, indent: number) =>
+  getAppBinding().JsonToYAML(input, indent);
+export const TextDiffCompareText: GoMethodFn<string> = (left: string, right: string) =>
+  getAppBinding().TextDiffCompareText(left, right);
+export const TextDiffCompareFiles: GoMethodFn<string> = (leftPath: string, rightPath: string) =>
+  getAppBinding().TextDiffCompareFiles(leftPath, rightPath);
+
 /** Type-safe Wails Go method call signature */
 export type GoMethodFn<T = any> = (...args: any[]) => Promise<T>;
 

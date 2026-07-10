@@ -3,8 +3,18 @@
  * Frontend components should import from this file rather than directly from wailsjs/go/.
  */
 
+import {
+  JsonFormat,
+  JsonMinify,
+  JsonValidate,
+} from '../../wailsjs/go/main/App';
+
+const getAppBinding = () => (window as any).go.main.App;
+
 // JSON methods
-export { JsonFormat, JsonMinify, JsonValidate } from '../../wailsjs/go/main/App';
+export { JsonFormat, JsonMinify, JsonValidate };
+export const JsonToYAML = (input: string, indent: number): Promise<string> =>
+  getAppBinding().JsonToYAML(input, indent);
 
 // Base64 methods
 export {
@@ -45,6 +55,12 @@ export { UuidGenerate, UuidValidate } from '../../wailsjs/go/main/App';
 
 // Regex methods
 export { RegexTest, RegexReplace } from '../../wailsjs/go/main/App';
+
+// Text diff methods
+export const TextDiffCompareText = (left: string, right: string): Promise<string> =>
+  getAppBinding().TextDiffCompareText(left, right);
+export const TextDiffCompareFiles = (leftPath: string, rightPath: string): Promise<string> =>
+  getAppBinding().TextDiffCompareFiles(leftPath, rightPath);
 
 // General methods
 export { ClipboardWrite, GetDataDir, GetToolList, GetAppVersion } from '../../wailsjs/go/main/App';

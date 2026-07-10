@@ -1,12 +1,24 @@
 /** Tool identifier type — matches Go ToolMeta.ID values */
 export type ToolId = 'json' | 'base64' | 'timestamp' | 'yaml' | 'xml' | 'random' | 'cron' |
-  'url' | 'hash' | 'jwt' | 'uuid' | 'regex' | 'regex-validator';
+  'url' | 'hash' | 'jwt' | 'uuid' | 'regex' | 'regex-validator' | 'text-diff';
 
 /** Tool action identifier */
 export type ToolAction = 'format' | 'minify' | 'validate' | 'encodeText' | 'decodeText' |
   'encodeFile' | 'decodeFile' | 'toDate' | 'toTimestamp' | 'timezone' |
-  'toJSON' | 'generate' | 'parse' | 'nextN' | 'encode' | 'decode' |
-  'parseQuery' | 'generateAll' | 'test' | 'replace' | 'validatePattern';
+  'toJSON' | 'toYAML' | 'generate' | 'parse' | 'nextN' | 'encode' | 'decode' |
+  'parseQuery' | 'generateAll' | 'test' | 'replace' | 'validatePattern' |
+  'compareText' | 'compareFiles';
+
+/** Execution status for a tool action */
+export type ToolExecutionStatus = 'success' | 'error';
+
+/** Structured metadata for a shared tool execution */
+export interface ToolExecutionDescriptor {
+  methodName: string;
+  toolId?: ToolId;
+  action?: ToolAction;
+  recordHistory?: boolean;
+}
 
 /** Action definition within a tool */
 export interface ActionDef {

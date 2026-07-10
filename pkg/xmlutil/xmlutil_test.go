@@ -203,6 +203,22 @@ func TestMinifyEscapesTextAndAttributes(t *testing.T) {
 	}
 }
 
+func TestFormatReportsLineAndColumn(t *testing.T) {
+	input := "<root>\n  <child>\n</root>"
+
+	_, err := Format(input, 2)
+	if err == nil {
+		t.Fatal("Format() error = nil, want parse error")
+	}
+
+	if !strings.Contains(err.Error(), "Line 3, Column") {
+		t.Fatalf("Format() error = %q, want line and column details", err.Error())
+	}
+	if !strings.Contains(err.Error(), "closed by </root>") {
+		t.Fatalf("Format() error = %q, want mismatch details", err.Error())
+	}
+}
+
 func TestValidate(t *testing.T) {
 	tests := []struct {
 		name    string
@@ -265,6 +281,22 @@ func TestValidate(t *testing.T) {
 				}
 			}
 		})
+	}
+}
+
+func TestValidateReportsLineAndColumn(t *testing.T) {
+	input := "<root>\n  <child>\n</root>"
+
+	got, err := Validate(input)
+	if err != nil {
+		t.Fatalf("Validate() error = %v, want nil", err)
+	}
+
+	if !strings.Contains(got, "Invalid XML: Line 3, Column") {
+		t.Fatalf("Validate() = %q, want line and column details", got)
+	}
+	if !strings.Contains(got, "closed by </root>") {
+		t.Fatalf("Validate() = %q, want mismatch details", got)
 	}
 }
 

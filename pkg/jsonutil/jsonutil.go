@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"strings"
+
+	"gopkg.in/yaml.v3"
 )
 
 // Format beautifies JSON input with the specified indentation level.
@@ -49,6 +51,36 @@ func Minify(input string) (string, error) {
 	return string(result), nil
 }
 
+// ToYAML converts JSON input to YAML format with the specified indentation level.
+// Returns the formatted YAML string or an error with line/column information.
+func ToYAML(input string, indent int) (string, error) {
+	input = strings.TrimSpace(input)
+	if input == "" {
+		return "", fmt.Errorf("input is empty")
+	}
+
+	if indent <= 0 {
+		indent = 2
+	}
+
+	var obj interface{}
+	if err := json.Unmarshal([]byte(input), &obj); err != nil {
+		return "", fmt.Errorf("Line %d: %v", findErrorLine(input, err), err)
+	}
+
+	var buf strings.Builder
+	enc := yaml.NewEncoder(&buf)
+	enc.SetIndent(indent)
+	if err := enc.Encode(obj); err != nil {
+		return "", fmt.Errorf("YAML conversion error: %v", err)
+	}
+	if err := enc.Close(); err != nil {
+		return "", fmt.Errorf("YAML conversion error: %v", err)
+	}
+
+	return strings.TrimSpace(buf.String()), nil
+}
+
 // Validate checks if the input is valid JSON.
 // Returns "Valid JSON" if valid, or a detailed error message with line/column info.
 func Validate(input string) (string, error) {
@@ -81,7 +113,7 @@ func findErrorLine(input string, err error) int {
 		pos := 0
 		for pos < offset && line < len(lines)+1 {
 			lineLen := len(lines[line-1]) + 1 // +1 for newline
-			if pos + lineLen > offset {
+			if pos+lineLen > offset {
 				break
 			}
 			pos += lineLen
