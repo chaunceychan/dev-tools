@@ -186,6 +186,16 @@ export const TOOL_LIST: ToolMeta[] = [
       { action: 'compareFiles', label: '文件比较' },
     ],
   },
+  {
+    id: 'symmetric',
+    name: '对称加密',
+    icon: 'AES',
+    category: 'extended',
+    actions: [
+      { action: 'encrypt', label: '加密' },
+      { action: 'decrypt', label: '解密' },
+    ],
+  },
 ];
 
 /** Get tool metadata by ID */
@@ -236,6 +246,13 @@ export const HASH_ALGORITHM_OPTIONS = [
   { value: 'sha1', label: 'SHA1' },
   { value: 'sha256', label: 'SHA256' },
   { value: 'sha512', label: 'SHA512' },
+];
+
+/** Symmetric encryption algorithm options */
+export const SYMMETRIC_ALGORITHM_OPTIONS = [
+  { value: 'aes', label: 'AES-256-CBC' },
+  { value: 'sm4', label: 'SM4-CBC' },
+  { value: '3des', label: '3DES-CBC' },
 ];
 
 /** Regex validator preset patterns */

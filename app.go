@@ -62,7 +62,7 @@ func (a *App) GetToolList() []ToolMeta {
 
 // GetAppVersion returns the current application version string.
 func (a *App) GetAppVersion() string {
-	return "1.1.0"
+	return "1.2.0"
 }
 
 // ToolList is the static tool metadata list used by GetToolList.
@@ -211,6 +211,16 @@ var ToolList = []ToolMeta{
 		Actions: []ActionDef{
 			{Action: "compareText", Label: "文本比较"},
 			{Action: "compareFiles", Label: "文件比较"},
+		},
+	},
+	{
+		ID:       "symmetric",
+		Name:     "对称加密",
+		Icon:     "AES",
+		Category: "extended",
+		Actions: []ActionDef{
+			{Action: "encrypt", Label: "加密"},
+			{Action: "decrypt", Label: "解密"},
 		},
 	},
 }

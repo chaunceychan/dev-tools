@@ -14,6 +14,7 @@ import UuidTool from '@/components/tools/UuidTool';
 import RegexTool from '@/components/tools/RegexTool';
 import RegexValidatorTool from '@/components/tools/RegexValidatorTool';
 import TextDiffTool from '@/components/tools/TextDiffTool';
+import SymmetricTool from '@/components/tools/SymmetricTool';
 import type { ToolId } from '@/types/tool';
 
 /** Tool component mapping — each ToolId maps to its React component */
@@ -32,6 +33,7 @@ const TOOL_COMPONENTS: Record<ToolId, React.FC> = {
   regex: RegexTool,
   'regex-validator': RegexValidatorTool,
   'text-diff': TextDiffTool,
+  symmetric: SymmetricTool,
 };
 
 /**

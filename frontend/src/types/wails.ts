@@ -51,6 +51,8 @@ export {
   UuidValidate,
   RegexTest,
   RegexReplace,
+  SymmetricEncrypt,
+  SymmetricDecrypt,
   ClipboardWrite,
   GetDataDir,
   GetToolList,

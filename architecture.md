@@ -400,7 +400,7 @@ interface HashResult {
     → 创建便携数据目录 {exe}/data/
     → 前端 React 渲染 AppLayout + Sidebar
     → 调用 GetToolList() 获取工具列表（从 app.ToolList 静态定义）
-    → Sidebar 展示 12 个工具（7 个核心 + 5 个扩展）
+    → Sidebar 展示 15 个工具（3 个核心 + 12 个扩展）
 ```
 
 #### 4.2 工具操作典型流程（以 JSON 格式化为例）
@@ -577,7 +577,7 @@ interface HashResult {
 **关键实现要点**:
 - Wails 自动生成绑定：运行 `wails generate module` 生成 `frontend/src/wailsjs/go/` 下的调用代码
 - `useToolCommand.ts`: 封装 Wails 方法调用 + 状态管理（loading/error/output）
-- `constants.ts`: 工具列表静态定义（12 个工具的元信息，包含 5 个新增工具）
+- `constants.ts`: 工具列表静态定义（15 个工具的元信息，包含 12 个扩展工具）
 - `toolStore`: 使用 Zustand 管理当前工具状态（currentTool, input, output, error, loading）
 
 **依赖**: T01
@@ -614,7 +614,7 @@ interface HashResult {
 
 #### T04: Go 业务逻辑实现 ✅ 已完成
 
-**说明**: 实现 Go 所有 pkg 工具包 + service 服务层，完成 12 个工具的后端逻辑。
+**说明**: 实现 Go 所有 pkg 工具包 + service 服务层，完成 15 个工具的后端逻辑。
 
 | 类别 | 文件 |
 |------|------|
@@ -627,6 +627,7 @@ interface HashResult {
 | Cron | pkg/cronutil/cronutil.go, cron_service.go |
 | URL | pkg/urlutil/urlutil.go, url_service.go |
 | Hash | pkg/hashutil/hashutil.go, hash_service.go |
+| 对称加密 | pkg/symmetricutil/symmetricutil.go, symmetric_service.go |
 | JWT | pkg/jwtutil/jwtutil.go, jwt_service.go |
 | UUID | pkg/uuidutil/uuidutil.go, uuid_service.go |
 | 正则 | pkg/regexutil/regexutil.go, regex_service.go |
@@ -642,6 +643,7 @@ interface HashResult {
 - `cronutil`: 5 位标准 + 6 位秒级，解析含义描述 + 计算下次 N 次执行时间
 - `urlutil`: Encode/Decode/ParseQuery（解析参数为键值对 map）
 - `hashutil`: MD5/SHA1/SHA256/SHA512 单个/全部生成
+- `symmetricutil`: AES / SM4 / 3DES 文本加解密，Base64 输出
 - `jwtutil`: 解析 JWT 为 Header/Payload/Signature 三部分
 - `uuidutil`: 生成 UUID v4，格式验证
 - `regexutil`: 正则测试（高亮匹配项）、字符串替换
@@ -668,7 +670,7 @@ interface HashResult {
 - `RandomTool`: 配置区（长度滑块 + 字符集勾选 + 数量）+ [生成] 按钮 + 结果列表 + 每条复制
 - `CronTool`: 输入框 + 预设模板下拉 + [解析][验证][下次执行] + 含义描述 + 下次 5 次时间列表表格
 - `App.tsx`: 完善路由编排，根据 toolStore.currentTool 渲染对应工具组件
-- 端到端调试：验证所有 12 个工具的前端 → Go → 返回 → 渲染链路
+- 端到端调试：验证所有 15 个工具的前端 → Go → 返回 → 渲染链路
 
 **依赖**: T02, T03, T04（需要通信层、UI 框架、Go 逻辑全部就绪）
 **优先级**: P1

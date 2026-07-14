@@ -56,6 +56,9 @@ export { UuidGenerate, UuidValidate } from '../../wailsjs/go/main/App';
 // Regex methods
 export { RegexTest, RegexReplace } from '../../wailsjs/go/main/App';
 
+// Symmetric encryption methods
+export { SymmetricEncrypt, SymmetricDecrypt } from '../../wailsjs/go/main/App';
+
 // Text diff methods
 export const TextDiffCompareText = (left: string, right: string): Promise<string> =>
   getAppBinding().TextDiffCompareText(left, right);

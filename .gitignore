@@ -55,3 +55,6 @@ data/
 .workbuddy/
 .reasonix/
 reasonix.toml
+
+# Local workflow artifacts
+docs/
