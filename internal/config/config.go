@@ -25,7 +25,7 @@ func DefaultConfig() *AppConfig {
 		FileSizeLimit:    10 * 1024 * 1024, // 10MB
 		DefaultIndent:    2,
 		DefaultCronCount: 5,
-		AppVersion:       "1.1.0",
+		AppVersion:       "1.2.0",
 		HistoryLimit:     50,
 	}
 }

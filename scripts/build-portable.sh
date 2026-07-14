@@ -49,7 +49,7 @@ mkdir -p "$DIST_DIR/data"
 
 # Create a simple README for the portable package
 cat > "$DIST_DIR/README.txt" << 'EOF'
-DevTools - 开发常用小工具集 v1.1.0
+DevTools - 开发常用小工具集 v1.2.0
 
 使用方法：
 1. 解压此 zip 文件到任意目录
@@ -57,7 +57,7 @@ DevTools - 开发常用小工具集 v1.1.0
 3. 数据文件保存在 exe 同目录下的 data/ 目录
 
 包含工具：
-- JSON 格式化（格式化/压缩/验证）
+- JSON 格式化（格式化/压缩/验证/转YAML）
 - Base64 编解码（文本/文件模式）
 - 时间戳转换（双向转换+多时区）
 - YAML 格式化（格式化/验证/转JSON）
@@ -69,6 +69,9 @@ DevTools - 开发常用小工具集 v1.1.0
 - JWT 解析
 - UUID 工具（生成/验证）
 - 正则测试（匹配/替换）
+- 常用校验（邮箱/手机号/URL 等预设）
+- 文本 Diff（文本/文件比较）
+- 对称加密（AES/SM4/3DES）
 
 注意：
 - Windows 10/11 已自带 WebView2 runtime
@@ -78,11 +81,11 @@ EOF
 
 # Package as zip
 echo "=== Creating portable zip package ==="
-rm -f dist/dev-tools-portable-v1.1.0.zip
+rm -f dist/dev-tools-portable-v1.2.0.zip
 cd dist
-zip -r dev-tools-portable-v1.1.0.zip dev-tools-portable/
+zip -r dev-tools-portable-v1.2.0.zip dev-tools-portable/
 cd ..
 
 echo ""
 echo "=== All done! ==="
-echo "Portable package: dist/dev-tools-portable-v1.1.0.zip"
+echo "Portable package: dist/dev-tools-portable-v1.2.0.zip"

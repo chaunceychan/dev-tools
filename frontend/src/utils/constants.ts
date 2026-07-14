@@ -24,7 +24,7 @@ export const DEFAULT_RANDOM_LENGTH = 16;
 export const DEFAULT_RANDOM_COUNT = 1;
 
 /** Application version */
-export const APP_VERSION = '1.1.0';
+export const APP_VERSION = '1.2.0';
 
 /** Sidebar width in pixels */
 export const SIDEBAR_WIDTH = 200;
