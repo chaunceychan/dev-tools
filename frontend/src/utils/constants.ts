@@ -43,7 +43,6 @@ export const TOOL_LIST: ToolMeta[] = [
   {
     id: 'json',
     name: 'JSON 格式化',
-    icon: '{ }',
     category: 'core',
     actions: [
       { action: 'format', label: '格式化' },
@@ -55,7 +54,6 @@ export const TOOL_LIST: ToolMeta[] = [
   {
     id: 'base64',
     name: 'Base64 编解码',
-    icon: 'B64',
     category: 'core',
     actions: [
       { action: 'encodeText', label: '文本编码' },
@@ -67,7 +65,6 @@ export const TOOL_LIST: ToolMeta[] = [
   {
     id: 'timestamp',
     name: '时间戳转换',
-    icon: '⏱',
     category: 'core',
     actions: [
       { action: 'toDate', label: '转日期' },
@@ -78,7 +75,6 @@ export const TOOL_LIST: ToolMeta[] = [
   {
     id: 'yaml',
     name: 'YAML 格式化',
-    icon: 'Y',
     category: 'extended',
     actions: [
       { action: 'format', label: '格式化' },
@@ -89,7 +85,6 @@ export const TOOL_LIST: ToolMeta[] = [
   {
     id: 'xml',
     name: 'XML 格式化',
-    icon: '< >',
     category: 'extended',
     actions: [
       { action: 'format', label: '格式化' },
@@ -100,7 +95,6 @@ export const TOOL_LIST: ToolMeta[] = [
   {
     id: 'random',
     name: '随机字符串',
-    icon: '🎲',
     category: 'extended',
     actions: [
       { action: 'generate', label: '生成' },
@@ -109,7 +103,6 @@ export const TOOL_LIST: ToolMeta[] = [
   {
     id: 'cron',
     name: 'Cron 解析',
-    icon: '⏰',
     category: 'extended',
     actions: [
       { action: 'parse', label: '解析' },
@@ -120,7 +113,6 @@ export const TOOL_LIST: ToolMeta[] = [
   {
     id: 'url',
     name: 'URL 编解码',
-    icon: 'URL',
     category: 'extended',
     actions: [
       { action: 'encode', label: '编码' },
@@ -131,7 +123,6 @@ export const TOOL_LIST: ToolMeta[] = [
   {
     id: 'hash',
     name: 'Hash 摘要',
-    icon: '#',
     category: 'extended',
     actions: [
       { action: 'generate', label: '生成' },
@@ -141,7 +132,6 @@ export const TOOL_LIST: ToolMeta[] = [
   {
     id: 'jwt',
     name: 'JWT 解析',
-    icon: 'JWT',
     category: 'extended',
     actions: [
       { action: 'decode', label: '解析' },
@@ -150,7 +140,6 @@ export const TOOL_LIST: ToolMeta[] = [
   {
     id: 'uuid',
     name: 'UUID 工具',
-    icon: 'ID',
     category: 'extended',
     actions: [
       { action: 'generate', label: '生成' },
@@ -160,7 +149,6 @@ export const TOOL_LIST: ToolMeta[] = [
   {
     id: 'regex',
     name: '正则测试',
-    icon: '.*',
     category: 'extended',
     actions: [
       { action: 'test', label: '测试' },
@@ -170,7 +158,6 @@ export const TOOL_LIST: ToolMeta[] = [
   {
     id: 'regex-validator',
     name: '常用校验',
-    icon: '✓',
     category: 'extended',
     actions: [
       { action: 'validatePattern', label: '验证' },
@@ -179,7 +166,6 @@ export const TOOL_LIST: ToolMeta[] = [
   {
     id: 'text-diff',
     name: '文本 Diff',
-    icon: 'DIFF',
     category: 'extended',
     actions: [
       { action: 'compareText', label: '文本比较' },
@@ -189,7 +175,6 @@ export const TOOL_LIST: ToolMeta[] = [
   {
     id: 'symmetric',
     name: '对称加密',
-    icon: 'AES',
     category: 'extended',
     actions: [
       { action: 'encrypt', label: '加密' },

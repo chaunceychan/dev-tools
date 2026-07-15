@@ -96,19 +96,25 @@ body {
   color: var(--text);
 }
 
-/* Smooth theme transitions for non-discrete properties */
+/* Smooth theme transitions for non-discrete properties.
+   Scoped to interactive/stateful elements (not every div/span) to avoid
+   needless transitions and repaint cost. */
 html,
 body,
 #root,
 button,
 input,
 textarea,
-select,
-div,
-span {
+select {
   transition-property: background-color, border-color, color, fill, stroke;
   transition-duration: 150ms;
   transition-timing-function: ease-in-out;
+}
+
+/* Global keyboard focus ring for accessibility */
+*:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
 }
 
 /* Scrollbar styling */

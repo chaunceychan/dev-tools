@@ -54,7 +54,9 @@ const MainContent: React.FC = () => {
 
   return (
     <div className="flex-1 overflow-y-auto p-4">
-      <ToolComponent />
+      <div className="max-w-5xl mx-auto w-full">
+        <ToolComponent />
+      </div>
     </div>
   );
 };

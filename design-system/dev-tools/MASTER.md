@@ -18,25 +18,26 @@
 
 | Role | Hex | CSS Variable |
 |------|-----|--------------|
-| Primary | `#1E293B` | `--color-primary` |
+| Primary | `#3B82F6` | `--color-primary` |
+| Primary (dark) | `#60A5FA` | `--color-primary-dark` |
 | Secondary | `#334155` | `--color-secondary` |
-| CTA/Accent | `#22C55E` | `--color-cta` |
-| Background | `#0F172A` | `--color-background` |
-| Text | `#F8FAFC` | `--color-text` |
+| Success/CTA | `#22C55E` | `--color-success` |
+| Background (light) | `#F8FAFC` | `--color-background` |
+| Background (dark) | `#0F172A` | `--color-background-dark` |
+| Text (light) | `#0F172A` | `--color-text` |
+| Text (dark) | `#F8FAFC` | `--color-text-dark` |
 
-**Color Notes:** Code dark + run green
+**Color Notes:** Blue primary action + green success, light/dark themes driven by CSS variables (see `frontend/src/styles/globals.css`).
 
 ### Typography
 
-- **Heading Font:** Plus Jakarta Sans
-- **Body Font:** Plus Jakarta Sans
-- **Mood:** friendly, modern, saas, clean, approachable, professional
-- **Google Fonts:** [Plus Jakarta Sans + Plus Jakarta Sans](https://fonts.google.com/share?selection.family=Plus+Jakarta+Sans:wght@300;400;500;600;700)
+- **Heading Font:** System UI font stack
+- **Body Font:** System UI font stack
+- **Mono Font:** JetBrains Mono / Fira Code / Cascadia Code / Consolas (code output)
+- **Mood:** friendly, modern, clean, approachable, professional
+- **Stack:** `-apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Helvetica Neue', Helvetica, Arial, sans-serif`
 
-**CSS Import:**
-```css
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
-```
+**CSS Import:** none — uses the OS native UI font for a native desktop-app feel.
 
 ### Spacing Variables
 
@@ -68,29 +69,28 @@
 ```css
 /* Primary Button */
 .btn-primary {
-  background: #22C55E;
+  background: #3B82F6;
   color: white;
   padding: 12px 24px;
   border-radius: 8px;
   font-weight: 600;
-  transition: all 200ms ease;
+  transition: background-color 200ms ease;
   cursor: pointer;
 }
 
 .btn-primary:hover {
-  opacity: 0.9;
-  transform: translateY(-1px);
+  background: #2563EB;
 }
 
 /* Secondary Button */
 .btn-secondary {
   background: transparent;
-  color: #1E293B;
-  border: 2px solid #1E293B;
+  color: #0F172A;
+  border: 1px solid #E2E8F0;
   padding: 12px 24px;
   border-radius: 8px;
   font-weight: 600;
-  transition: all 200ms ease;
+  transition: background-color 200ms ease;
   cursor: pointer;
 }
 ```
@@ -125,9 +125,9 @@
 }
 
 .input:focus {
-  border-color: #1E293B;
+  border-color: #3B82F6;
   outline: none;
-  box-shadow: 0 0 0 3px #1E293B20;
+  box-shadow: 0 0 0 3px #3B82F620;
 }
 ```
 
@@ -153,24 +153,22 @@
 
 ## Style Guidelines
 
-**Style:** Vibrant & Block-based
+**Style:** Clean & Professional (developer utility)
 
-**Keywords:** Bold, energetic, playful, block layout, geometric shapes, high color contrast, duotone, modern, energetic
+**Keywords:** Minimal, functional, calm, dense, neutral surfaces, blue accent, light/dark/system
 
-**Best For:** Startups, creative agencies, gaming, social media, youth-focused, entertainment, consumer
+**Best For:** Developer desktop utilities, internal tools, technical productivity apps
 
-**Key Effects:** Large sections (48px+ gaps), animated patterns, bold hover (color shift), scroll-snap, large type (32px+), 200-300ms
+**Key Effects:** Subtle elevation (shadow/border), 150-300ms color transitions on theme/hover, persistent sidebar navigation, monospace for code output, consistent SVG iconography
 
-### Page Pattern
+### Layout Pattern
 
-**Pattern Name:** Horizontal Scroll Journey
+**Pattern Name:** Sidebar + Content (App Shell)
 
-- **Conversion Strategy:** Immersive product discovery. High engagement. Keep navigation visible.
-28,Bento Grid Showcase,bento,  grid,  features,  modular,  apple-style,  showcase", 1. Hero, 2. Bento Grid (Key Features), 3. Detail Cards, 4. Tech Specs, 5. CTA, Floating Action Button or Bottom of Grid, Card backgrounds: #F5F5F7 or Glass. Icons: Vibrant brand colors. Text: Dark., Hover card scale (1.02), video inside cards, tilt effect, staggered reveal, Scannable value props. High information density without clutter. Mobile stack.
-29,Interactive 3D Configurator,3d,  configurator,  customizer,  interactive,  product", 1. Hero (Configurator), 2. Feature Highlight (synced), 3. Price/Specs, 4. Purchase, Inside Configurator UI + Sticky Bottom Bar, Neutral studio background. Product: Realistic materials. UI: Minimal overlay., Real-time rendering, material swap animation, camera rotate/zoom, light reflection, Increases ownership feeling. 360 view reduces return rates. Direct add-to-cart.
-30,AI-Driven Dynamic Landing,ai,  dynamic,  personalized,  adaptive,  generative", 1. Prompt/Input Hero, 2. Generated Result Preview, 3. How it Works, 4. Value Prop, Input Field (Hero) + 'Try it' Buttons, Adaptive to user input. Dark mode for compute feel. Neon accents., Typing text effects, shimmering generation loaders, morphing layouts, Immediate value demonstration. 'Show, don't tell'. Low friction start.
-- **CTA Placement:** Floating Sticky CTA or End of Horizontal Track
-- **Section Order:** 1. Intro (Vertical), 2. The Journey (Horizontal Track), 3. Detail Reveal, 4. Vertical Footer
+- **Structure:** Collapsible left sidebar (tool list grouped by category) + scrollable content area + bottom status bar.
+- **Navigation:** Persistent sidebar; current tool highlighted with the primary accent. Fully keyboard accessible (buttons, visible focus ring).
+- **Theme:** Light / Dark / System via the theme toggle; respects `prefers-color-scheme` and `prefers-reduced-motion`.
+- **Content width:** Centered `max-w-5xl` container for readability on wide screens.
 
 ---
 

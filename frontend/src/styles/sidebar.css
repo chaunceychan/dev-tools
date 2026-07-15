@@ -11,6 +11,10 @@
   color: var(--sidebar-text);
   font-size: 14px;
   font-weight: 500;
+  border: none;
+  background: transparent;
+  font-family: inherit;
+  text-align: left;
 }
 
 .sidebar-nav-item:hover {
@@ -21,6 +25,11 @@
   background-color: var(--sidebar-active-bg);
   color: var(--sidebar-active);
   font-weight: 600;
+}
+
+.sidebar-nav-item:focus-visible {
+  outline: 2px solid var(--sidebar-active);
+  outline-offset: -2px;
 }
 
 .sidebar-nav-item .sidebar-icon {

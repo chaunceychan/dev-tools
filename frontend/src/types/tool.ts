@@ -30,7 +30,6 @@ export interface ActionDef {
 export interface ToolMeta {
   id: ToolId;
   name: string;
-  icon: string;
   category: 'core' | 'extended';
   actions: ActionDef[];
 }
